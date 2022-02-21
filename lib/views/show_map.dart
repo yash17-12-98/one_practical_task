@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:one_practical_task/models/result_db.dart';
-import 'package:one_practical_task/services/map_json_servies.dart';
 import 'package:one_practical_task/view_models/result_list_view_model.dart';
 
 class ShowMap extends StatefulWidget {
@@ -15,16 +13,15 @@ class ShowMap extends StatefulWidget {
 
 class _ShowMapState extends State<ShowMap> {
 
-  MapJsonServices dbService = MapJsonServices();
-  List<ResultDB>? resultDB;
   // Completer<GoogleMapController> _controller = Completer();
   // double lat = 37.42796133580664,
   //     long = -122.085749655962;
+  ListResultViewModel listResultViewModel = ListResultViewModel();
 
   @override
   void initState() {
     // TODO: implement initStat
-    dbService.getResultList();
+    listResultViewModel.fetchResList();
     super.initState();
   }
 
@@ -55,8 +52,9 @@ class _ShowMapState extends State<ShowMap> {
         //     _controller.complete(controller);
         //   },
         // ),
+
         body: FutureBuilder(
-            future: MapJsonServices().getResultList(),
+            future: listResultViewModel.fetchResList(),
             builder: (context, snapshot) {
               if(snapshot.connectionState == ConnectionState.waiting){
                 return Center(child: CircularProgressIndicator());
@@ -65,28 +63,45 @@ class _ShowMapState extends State<ShowMap> {
                 return ListView.builder(
                     reverse: false,
                     shrinkWrap: true,
-                    itemCount: dbService.result!.length,
+                    itemCount: listResultViewModel.result!.length,
                     itemBuilder: (BuildContext context, int index) {
-                      var article = dbService.result![index];
+                      var article = listResultViewModel.result![index];
                       return GestureDetector(
                           child: Container(
                             width: MediaQuery.of(context).size.width,
                             child: Card(
-                              child: Row(
-                                children: [
-                                  Image.network(article.icon),
-                                  Text(article.name),
-                                ],
-                              )
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Image.network(article.icon!),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(top:5.0, bottom: 5.0),
+                                                child: Text(article.name!),
+                                              ),
+                                              Text(article.vicinity.toString()),
+                                              Text("Latitude: "+article.lat.toString()),
+                                              Text("Longitude: "+article.lng.toString()),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                  ],
+                                )
                             ),
-                          ),
-                          onTap: () {
-                          });
+                          ),);
                     });
               }
 
             }
         )
+
     );
   }
 }

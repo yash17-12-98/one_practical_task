@@ -10,11 +10,11 @@ class ResultViewModel{
   }
 
   double? get lat {
-    return this._resultModel.geometry!.location!.lat;
+    return this._resultModel.lat;
   }
 
   double? get long {
-    return this._resultModel.geometry!.location!.lng;
+    return this._resultModel.lng;
   }
 
   String? get icon {

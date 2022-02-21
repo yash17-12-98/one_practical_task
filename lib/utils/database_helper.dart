@@ -1,4 +1,4 @@
-import 'package:one_practical_task/models/result_db.dart';
+import 'package:one_practical_task/models/result.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
@@ -55,20 +55,19 @@ class DatabaseHelper {
 
 	Future<List<Map<String, dynamic>>> getResMapList() async {
 		Database db = await this.database;
-
-
 		var result = await db.query(resTable);
 		return result;
 	}
 
 
-	Future<int> insertResult(ResultDB res) async {
+	Future<int> insertResult(Results res) async {
+		print("resbdfv "+res.lat.toString());
 		Database db = await this.database;
 		var result = await db.insert(resTable, res.toMap());
 		return result;
 	}
 
-	Future<int> updateResult(ResultDB res) async {
+	Future<int> updateResult(Results res) async {
 		var db = await this.database;
 		var result = await db.update(resTable, res.toMap(), where: '$colId = ?', whereArgs: [res.id]);
 		return result;
@@ -90,15 +89,16 @@ class DatabaseHelper {
 	}
 
 
-	Future<List<ResultDB>> getResList() async {
+	Future<List<Results>> getResList() async {
 
 		var resMapList = await getResMapList();
 		int count = resMapList.length;
 
-		List<ResultDB> resList = <ResultDB>[];
+		List<Results> resList = <Results>[];
 
 		for (int i = 0; i < count; i++) {
-			resList.add(ResultDB.fromMapObject(resMapList[i]));
+			print(resMapList[i].toString());
+			resList.add(Results.fromMapObject(resMapList[i]));
 		}
 
 		return resList;
